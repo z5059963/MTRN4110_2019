@@ -6,7 +6,7 @@ Open `example.ino` in the example folder with Arduino IDE.
 * `example.cpp` is an example of how to implement `example.h` student can look at.
 
 
-# Tutorial content
+# Tutorial contents
 
 * MTRN4110 Tutorial 0 - Getting Started with Arduino
 * MTRN4110 Tutorial 1 - Basic Arduino functions
