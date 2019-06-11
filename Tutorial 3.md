@@ -1,4 +1,4 @@
-# MTRN4230 Tutorial 3 C++
+# MTRN4110 Tutorial 3 C++
 This document covers advanced C++ features that may not nessesarily be covered in MTRN2500/MTRN3500
 
 A high quality C++ reference can be found [here](https://en.cppreference.com/w/)
