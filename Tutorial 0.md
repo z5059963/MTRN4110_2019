@@ -19,11 +19,11 @@ If you used the Installer, Windows - from XP up to 10 - will install drivers aut
 
 ## Step-III
 Run the Arduino IDE and open the LED blink example sketch: **File > Examples >01.Basics > Blink**. 
-![alt text](https://raw.githubusercontent.com/zhihao50/MTRN4110_2019/master/img1.png "File > Examples >01.Basics > Blink")
+![alt text](https://raw.githubusercontent.com/drliaowu/MTRN4110_2019/master/image/img1.png "File > Examples >01.Basics > Blink")
 You'll need to select the entry in the Tools > Boardmenu that corresponds to your Arduino orGenuino board.
-![alt text](https://raw.githubusercontent.com/zhihao50/MTRN4110_2019/master/img2.png "Tools > Boardmenu that corresponds to your Arduino orGenuino board")
+![alt text](https://raw.githubusercontent.com/drliaowu/MTRN4110_2019/master/image/img2.png "Tools > Boardmenu that corresponds to your Arduino orGenuino board")
 Select   the   serial   device   of  the   board  from   the  Tools   |   Serial   Port   menu.  This   is   likely   tobeCOM3or higher  (COM1andCOM2are  usually reserved  for hardware serial ports). Tofind   out,  you  can  disconnect   your  board  and  re-open   the  menu;  the   entry  that  disappearsshould be the Arduino board. Reconnect the board and select that serial port.
-![alt text](https://raw.githubusercontent.com/zhihao50/MTRN4110_2019/master/img3.png "FTools -> Port -> Select your board")
+![alt text](https://raw.githubusercontent.com/drliaowu/MTRN4110_2019/master/image/img3.png "FTools -> Port -> Select your board")
 
 ### Basic autonomy of Arduino program
 
@@ -43,6 +43,6 @@ Put your setup code in `setup()` function and main code in `loop()` that will be
 
 ## Step-IV
 Now, simply click the "Upload" button in the environment. Wait a few seconds - you shouldsee the RX and TX leds on the board flashing. If the upload is successful, the message "Doneuploading." will appear in the status bar.
-![alt text](https://raw.githubusercontent.com/zhihao50/MTRN4110_2019/master/img4.png "Upload code")
+![alt text](https://raw.githubusercontent.com/drliaowu/MTRN4110_2019/master/image/img4.png "Upload code")
 
 A few seconds after the upload finishes, you should see the pin 13 (L) LED on the board startto blink (in orange). If it does, congratulations! You've gotten Arduino MEGA2560 up-and-running. If you have problems, please see thedemonstrator.
