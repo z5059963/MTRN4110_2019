@@ -1,6 +1,6 @@
 #pragma once
 // __DO_NOT_CHANGE_THIS_FILE__
-#define MTRN_HARDWARE_VERSION 1.0
+#define MTRN_HARDWARE_VERSION 1.1
 
 #include "type_traits.h"
 #include "units.h"
@@ -17,7 +17,7 @@ using namespace units::literals;
 namespace hardware
 {
 /**
- * \brief io_mode is represents digital I/O modes.
+ * \brief io_mode enumerates all the possible digital I/O modes.
  */
 enum class io_mode : uint8_t
 {
@@ -32,7 +32,6 @@ enum class io_mode : uint8_t
 };
 
 /**
- * logic_level
  * \brief logic_level represents digital logic level.
  */
 enum class logic_level : uint8_t
@@ -46,7 +45,7 @@ enum class logic_level : uint8_t
 };
 
 /**
- * \brief pin_t represents Arduino pin number.
+ * \brief pin_t type is used to represent Arduino pin number.
  */
 using pin_t = uint8_t;
 }    // namespace hardware
@@ -55,8 +54,9 @@ namespace hardware
 {
 /**
  * \brief The digital_pin class template represents ownership of digital I/O
- * pins.
- * \tparam pin is the digital I/O pin owned by the class instantiation.
+ * pins. Each instantiation controls the digital pin specified by the pin
+ * template parameter \tparam pin is the Arduino digital pin number assigned to
+ * the instantiation. instantiation.
  */
 template <pin_t pin>
 class digital_pin
@@ -68,20 +68,19 @@ class digital_pin
     static constexpr auto pin_number = pin;
 
     /**
-     * \brief The config_io_mode method set I/O mode to the digital pin.
-     * Should be called to set the correct mode before any I/O activity.
-     * \param mode is the desired I/O mode.
+     * \brief The config_io_mode set the I/O mode of the digital_pin. Should be
+     * called before any I/O activity. \param mode is the desired I/O mode.
      */
     static auto config_io_mode (io_mode mode) -> void;
 
     /**
-     * \brief The read method returns the current pin input.
-     * \return the input logic level.
+     * \brief The read method reads the current logic level input of the digital
+     * pin. \return the current input logic level.
      */
     static auto read () -> logic_level;
 
     /**
-     * \brief The write method set digital pin output to mode.
+     * \brief The write method set the digital pin output.
      * \param level is the logic level to set the digital pin to.
      */
     static auto write (logic_level level) -> void;
@@ -98,22 +97,19 @@ class digital_pin
 
     /**
      * \brief The pwm_write method writes an analog voltage out as PWM wave.
-     * This function does not check if the pin is capable of PWM.
-     * Uno pin 3, 5, 6, 9, 10, 11. Mega: 2 - 13 and 44 - 46.
-     * PWM at 490Hz except pin 5 and 6 are 980Hz.
+     * This function does not need to check if the pin is capable of PWM.
+     * Uno pwm pin:  3, 5, 6, 9, 10, 11. Mega: 2 - 13 and 44 - 46.
+     * PWM output at 490Hz except pin 5 and 6 are at 980Hz.
      * \param duty_cycle value between 0.0 and 100.0 representing is the PWM
-     * duty cycle of 0% to 100%.
+     * duty cycle from 0% to 100%.
      */
     static auto pwm_write (units::percentage duty_cycle) -> void;
 
     /**
-     * \brief pulse_length measures the duration of a pulse in microseconds.
-     * With either rising or falling edge as trigger.
-     * \param state HIGH for rising edge trigger, LOW for falling edge trigger
-     * start.
-     * \param timeout in microseconds
-     * \return pulse length in
-     * microseconds.
+     * \brief pulse_length method measures the duration of a pulse input in
+     * units of microseconds. \param state is the trigger logic level, HIGH for
+     * rising edge trigger, LOW for falling edge trigger start. \param timeout
+     * in units of microseconds \return pulse length in units of microseconds.
      */
     static auto pulse_length (logic_level state = logic_level::high,
         units::microseconds timeout = 1000000_us) -> units::microseconds;
@@ -150,14 +146,14 @@ class analog_pin : public digital_pin<base::pin_number>
 
     public:
     /**
-     * \brief The set_analog_reference method set the reference voltage for
-     * analog read.
+     * \brief The set_analog_reference method set the reference voltage used for
+     * analog reading.
      * \param ref is the analog reference.
      */
     static auto set_analog_reference (analog_reference ref) -> void;
 
     /**
-     * \brief The analog_read method analog input.
+     * \brief The analog_read method reads the analog input value.
      * \return voltage in volts.
      */
     static auto analog_read () -> units::volts;
@@ -189,10 +185,8 @@ class interrupt : public digital_pin<pin::pin_number>
     /**
      * \brief The attach_interrupt method set the interrupt service routine
      * (ISR) that will be called when an interrupt is triggered.
-     * \param callback
-     * function with function signature of void meow ();
-     * \param mode is the
-     * interrupt trigger condition.
+     * \param callback function with function signature of "void meow ()";
+     * \param mode is the interrupt trigger condition.
      */
     static auto attach_interrupt (void (*callback) (),
         interrupt_mode mode = interrupt_mode::rising) -> void;
@@ -205,16 +199,20 @@ class interrupt : public digital_pin<pin::pin_number>
 };
 
 /**
- * \brief The motor represents one motor channel of the motor driver. See motor
- * driver data sheets for digital output combination to control the direction of
- * motor. \tparam pin_a is direction pin a \tparam pin_b is direction pin b
+ * \brief The motor template class represents one motor channel of the motor
+ * driver. See motor driver data sheets for digital output combination to
+ * control the direction of motor. \tparam pin_a is a motor control pin. Should
+ * be a instantiation of digital_pin. \tparam pin_b is the other motor control
+ * pin.Should be a instantiation of digital_pin. Student can choose the order of
+ * pin_a and pin_b.
  */
 template <class pin_a, class pin_b>
 class motor
 {
     public:
     /**
-     * \brief The enable method enables motor control pins.
+     * \brief The enable method perform initialisation necessary to start using
+     * the motor driver.
      */
     static auto enable () -> void;
 
@@ -224,13 +222,13 @@ class motor
     static auto stop () -> void;
 
     /**
-     * \brief The forward method makes the motor goes forward.
+     * \brief The forward method makes the motor go forward.
      * \param velocity is percentage of maximum speed of motor.
      */
     static auto forward (units::percentage velocity) -> void;
 
     /**
-     * \brief The forward method makes the motor goes backward.
+     * \brief The forward method makes the motor go backward.
      * \param velocity is percentage of maximum speed of motor.
      */
     static auto backward (units::percentage velocity) -> void;
@@ -247,15 +245,15 @@ enum class drive_direction : uint8_t
 };
 
 /**
- * \brief The encoder_count is a type representing the count of encoder
+ * \brief The encoder_count is the type representing the count of encoder
  */
 using encoder_count = int;
 
 /**
- * \brief The encoder class template reads the encoder value
+ * \brief The encoder class template reads the encoder
  * \tparam pin_a is the pin connected to encoder sensor A, should be a
- * digital_pin \tparam pin_b is the pin connected to encoder sensor B, should be
- * a digital_pin
+ * digital_pin \tparam pin_b is the pin connected to encoder sensor B, should
+ * bea digital_pin
  */
 template <typename pin_a, typename pin_b>
 class encoder
@@ -265,7 +263,8 @@ class encoder
 
     public:
     /**
-     * \brief The enable method initialise the encoder.
+     * \brief The enable method performs setup required to start using the
+     * encoder.
      */
     static auto enable () -> void;
 
@@ -283,7 +282,7 @@ class encoder
 };
 
 /**
- * \brief The wheel class template extends encoder to include the wheel
+ * \brief The wheel class template extends encoder class to include the wheel
  * parameters \tparam pin_a is the pin connected to encoder sensor A, should be
  * a digital_pin \tparam pin_b is the pin connected to encoder sensor B, should
  * be a digital_pin
@@ -294,7 +293,7 @@ class wheel : public encoder<pin_a, pin_b>
     public:
     /**
      * \brief The position method returns the distance traveled by the wheel,
-     * assume no slip. \return the distance traveled by the wheel
+     * assume no slip. \return the distance traveled by the wheel in millimeters
      */
     static auto position () -> units::millimeters;
 };
@@ -325,7 +324,7 @@ class i2c
     static constexpr clock_t fast_mode = 400000;
 
     /**
-     * \brief The begin method initialise i2c bus.
+     * \brief The enable method make the i2c bus ready to use.
      */
     static auto enable () -> void;
 
@@ -343,8 +342,8 @@ class imu
 {
     public:
     /**
-     * \brief The enable method initialise the imu.
-     * \return true if imu is successfully initialized.
+     * \brief The enable method performs the setup required to start using the
+     * imu. \return true if imu is successfully initialised.
      */
     static auto enable () -> bool;
 
@@ -356,26 +355,28 @@ class imu
     static auto update () -> bool;
 
     /**
-     * \brief The yaw method gets the current yaw value
-     * \return the yaw value from last update.
+     * \brief This yaw method gets the current yaw value
+     * \return the yaw value from the latest update, in radians.
      */
     static auto yaw () -> float;
 
     /**
-     * \brief The yaw method gets the current yaw value
-     * \return the yaw value from last update.
+     * \brief This yaw method set the current yaw angle to the specified value.
+     * EG: yaw(0.0) will set the current yaw angle to 0 and then rotating the
+     * robot by 45 degrees, yaw() will return 0.7854. \param value is the new
+     * yaw value in radians.
      */
     static auto yaw (float value) -> void;
 
     /**
      * \brief The pitch method gets the current pitch value
-     * \return the pitch value from last update.
+     * \return the pitch value from the latest update, in radians.
      */
     static auto pitch () -> float;
 
     /**
      * \brief The roll method gets the current roll value
-     * \return the roll value from last update.
+     * \return the roll value from the latest update, in radians.
      */
     static auto roll () -> float;
 
@@ -386,9 +387,13 @@ class imu
 };
 
 /**
- * \brief The lidar_tag is used to instantiate range_sensor template to
+ * \brief The lidar_tag is used to instantiate the lidar template class for
  * each individual range sensor.
- * \tparam id is the range sensor number.
+ * \tparam id is the range sensor number. EG: lidar_tag<0> could represent left
+ * lidar, lidar_tag<0> could represent the right lidar.
+ * NOTE: lidar_tag is only forward declared. Student to specify the exact class
+ structure.
+
  */
 template <uint8_t id>
 class lidar_tag;
@@ -397,18 +402,19 @@ class lidar_tag;
  *
  * \brief The lidar class read the distance from an range sensor
  * \tparam tag is used to instantiate the template for each physical sensor. Tag
- * need to be range_sensor_tag<value here>
+ * need to be lidar_tag<value here>
  */
 template <typename tag>
 class lidar
 {
-    // Ignore this, validate the type of tag is correct.
+    // Ignore this, validate the type of tag parameter is correct.
     static_assert (check_tag<tag, uint8_t, lidar_tag>::value,
-        "range_sensor must be templated by range_sensor_tag.");
+        "lidar must be templated by lidar_tag.");
 
     public:
     /**
-     * \brief The enable function initialise the range sensor.
+     * \brief The enable function performs the setup required to start using the
+     * range sensor.
      */
     static auto enable () -> void;
 
@@ -423,8 +429,8 @@ class lidar
 /**
  * \brief The sonar class interfaces with the ultrasound module. See
  * data sheet on how ultrasound range finder works.
- * \tparam trigger_pin is a analog_pin connected to the trigger pin of the
- * ultrasound module. \tparam echo_pin is a analog_pin connected to the
+ * \tparam trigger_pin is a digital_pin connected to the trigger pin of the
+ * ultrasound module. \tparam echo_pin is a digital_pin connected to the
  * echo pin of the ultrasound module
  */
 template <class trigger_pin, class echo_pin>
@@ -432,13 +438,14 @@ class sonar
 {
     public:
     /**
-     * \brief The enable the ultrasound.
+     * \brief The enable method perform setup required to start using the
+     * ultrasound module.
      */
     static auto enable () -> void;
 
     /**
-     * \brief The distance trigger the ultrasound module to get one distance
-     * measurement. \return measured distance in cm.
+     * \brief The distance trigger the ultrasound module and get one distance
+     * measurement. \return measured distance in mm.
      */
     static auto distance () -> units::millimeters;
 };
@@ -448,30 +455,31 @@ namespace hardware    // UART section
 {
 /**
  * \brief The serial_tag class instantiate serial_api to the specific serial
- * port.
- * \tparam id is the serial number.
+ * port.  EG: serial_tag<1> represent serial port 1, serial_tag<2> represent
+ * serial port 2. \tparam id is the serial port number. NOTE: serial_tag is only
+ * forward declared. Student to specify the exact class structure.
  */
 template <uint8_t id>
 class serial_tag;
 
 /**
  * \brief The char_count type represents the number of bytes written or
- * printed by serial.
+ * printed by the serial.
  */
 using char_count = unsigned int;
 
 /**
  * \brief The serial_api template class defines the common API for all serial
- * like streams. Delegate to the implementation to do the real work.
- * \tparam tag is the type of actual implementation of serial. tag need to be
- * serial_tag<value here>
+ * like streams. Implementation hint: Delegate to the tag class to do the real
+ * work. \tparam tag is the type of actual implementation of serial. tag need to
+ * be serial_tag<value here>
  */
 template <typename tag>
 class serial_api
 {
     // Ignore this, validate the type of tag is correct.
     static_assert (check_tag<tag, uint8_t, serial_tag>::value,
-        "serial_api must be templted by serial_tag.");
+        "serial_api must be templated by serial_tag class.");
 
     public:
     /**
@@ -483,7 +491,7 @@ class serial_api
 
     /**
      * \brief Print a character to serial as is.
-     * \param c is the character to print.
+     * \param c is the character to be printed.
      * \return total number of bytes written.
      */
     static auto print (char c) -> char_count;
@@ -648,7 +656,7 @@ class serial_api
     static auto write (char const * string, size_t size) -> char_count;
 
     /**
-     * \brief The begin method set the data rate of hardware serial connection
+     * \brief The enable method set the data rate of hardware serial connection
      * and start communication.
      * \param baud in bits per seconds. Common values include 9600,38400,115200,
      */
@@ -660,13 +668,13 @@ class serial_api
     static auto end () -> void;
 
     /**
-     * \brief The available method returns number of bytes available for read.
-     * \return number of bytes available to read.
+     * \brief The input_byte_in_buffer method returns number of bytes available
+     * for read. \return number of bytes available to read.
      */
     static auto input_byte_in_buffer () -> int;
 
     /**
-     * \brief The available_for_write method returns the number of bytes
+     * \brief The output_buffer_space method returns the number of bytes
      * available for write without blocking operation. Essentially the amount of
      * space left in the buffer.
      * \return number of bytes.
@@ -733,7 +741,8 @@ class serial_api
 class maze_layout_message;
 
 /**
- * \brief The maze_layout class holds the parsed layout of the maze.
+ * \brief The maze_layout class holds the parsed layout of the maze. Student to
+ * design the class.
  */
 class maze_layout;
 
@@ -744,7 +753,8 @@ class maze_layout;
 auto receive_maze_layout () -> maze_layout_message;
 
 /**
- * \brief cell_location class describe the position of a cell.
+ * \brief cell_location class describe the position of a cell. Student to design
+ * the class.
  */
 class cell_location;
 
@@ -761,7 +771,7 @@ class display
 {
     public:
     /**
-     * \brief Row and column position on the lcd display.
+     * \brief Represent a position on the lcd display include row and column.
      */
     struct coordinate
     {
@@ -770,32 +780,33 @@ class display
     };
 
     /**
-     * \brief Initialise the lcd display.
+     * \brief enable method performs setup required to start using the display.
      */
     static auto enable () -> void;
 
     /**
-     * \brief
-     * \param cursor_position method set the cursor position.
+     * \brief the cursor method set the current cursor position to the position
+     * specified by cursor_position. \param cursor_position is the new cursor
+     * position.
      */
     static auto cursor (coordinate cursor_position) -> void;
 
     /**
-     * \brief print a string
+     * \brief print a string to the LCD display.
      * \param string c string to be displayed.
      * \return number of char printed.
      */
     static auto print (char const * string) -> size_t;
 
     /**
-     * \brief print number in in decimal format.
+     * \brief print number in decimal format to the LCD display.
      * \param n is the number to be printed.
      * \return number of char printed.
      */
     static auto print (int n) -> size_t;
 
     /**
-     * \brief print double in in decimal format.
+     * \brief print double in decimal format to the LCD display.
      * \param n is the number to be printed.
      * \return number of char printed.
      */
@@ -803,8 +814,9 @@ class display
 
     /**
      * \brief print a message about the layout of a cell (ie is the cell open or
-     * closed in the four directions). \param maze is the layout of the maze
-     * \param cell is the cell to be printed.
+     * closed in the four directions) to the LCD display.
+     * \param maze is the layout of the maze
+     * \param cell is the location of the cell to be printed.
      * \return number of char printed.
      */
     static auto print (maze_layout maze, cell_location cell) -> size_t;
